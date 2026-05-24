@@ -62,6 +62,10 @@ int main() {
         TraceLog(LOG_WARNING, "Unable to set resources directory");
     }
 
+    // Load render texture for virtual world
+    RenderTexture target = LoadRenderTexture(config::world_width, config::world_height);
+    SetTextureFilter(target.texture, TEXTURE_FILTER_POINT);
+
     // Load sprites atlas
     Texture atlas = LoadTexture(config::atlas_file);
     Rectangle shield_rect = atlas::get_sprite_rect(atlas::Shield);
@@ -70,17 +74,36 @@ int main() {
         // Logic
         // ...
 
-        BeginDrawing();
+        // Draw within virtual world
+        BeginTextureMode(target);
         ClearBackground(theme::bg0);
+        DrawTextureRec(atlas, shield_rect, {10, 10}, theme::green);
+        EndTextureMode();
 
-        // Draw
-        DrawTextureRec(atlas, shield_rect, {400, 500}, WHITE);
+        // Draw virtual world to screen
+        BeginDrawing();
+        ClearBackground(theme::bg0_hard);
 
+        // Calculate scale to fit the window (keeping aspect ratio)
+        float scale_x = (float)GetScreenWidth() / config::world_width;
+        float scale_y = (float)GetScreenHeight() / config::world_height;
+        float scale = (scale_x < scale_y) ? scale_x : scale_y;
+
+        Rectangle src_rect = {0, 0, (float)target.texture.width, (float)-target.texture.height};
+        Rectangle dest_rect = {
+            (GetScreenWidth() - (config::world_width * scale)) / 2.0f,
+            (GetScreenHeight() - (config::world_height * scale)) / 2.0f,
+            config::world_width * scale,
+            config::world_height * scale
+        };
+
+        DrawTexturePro(target.texture, src_rect, dest_rect, {0, 0}, 0, WHITE);
         EndDrawing();
     }
 
     // Cleanup
     UnloadTexture(atlas);
+    UnloadRenderTexture(target);
     CloseWindow();
 
     return 0;

@@ -11,8 +11,13 @@ namespace config {
     constexpr const char* title = "Space Invaders";
 
     // Screen
-    constexpr int screen_width = 1280;
-    constexpr int screen_height = 720;
+    constexpr int screen_width = 790;
+    constexpr int screen_height = 900;
+
+    // World
+    constexpr int world_width = 224;
+    constexpr int world_height = 256;
+    constexpr int scale = 3;
 
     // Resources
     constexpr const char* resource_dir = "resources";
