@@ -17,12 +17,16 @@ namespace config {
     // World
     constexpr int world_width = 224;
     constexpr int world_height = 256;
-    constexpr int scale = 3;
 
     // Resources
     constexpr const char* resource_dir = "resources";
     constexpr const char* icon_file = "icon.png";
     constexpr const char* atlas_file = "sprites/atlas.png";
+
+    // Player
+    constexpr int player_spacing_x = 2;
+    constexpr int player_spacing_y = 10;
+    constexpr int player_speed = 1;
 }
 
 /**
