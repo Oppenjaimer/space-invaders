@@ -1,5 +1,6 @@
 #include "raylib.h"
 
+#include "atlas.hpp"
 #include "config.hpp"
 
 /**
@@ -61,6 +62,10 @@ int main() {
         TraceLog(LOG_WARNING, "Unable to set resources directory");
     }
 
+    // Load sprites atlas
+    Texture atlas = LoadTexture(atlas::image_path);
+    Rectangle shield_rect = atlas::get_sprite_rect("shield");
+
     while (!WindowShouldClose()) {
         // Logic
         // ...
@@ -69,7 +74,7 @@ int main() {
         ClearBackground(theme::bg0);
 
         // Draw
-        DrawText("Hello there!", 50, 50, 30, theme::fg0);
+        DrawTextureRec(atlas, shield_rect, {400, 500}, WHITE);
 
         EndDrawing();
     }
