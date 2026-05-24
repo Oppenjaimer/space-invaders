@@ -53,9 +53,9 @@ int main() {
     SetTargetFPS(config::fps);
 
     // Set resources directory and app icon
-    bool found = set_resource_dir("resources");
+    bool found = set_resource_dir(config::resource_dir);
     if (found) {
-        Image icon = LoadImage("icon.png");
+        Image icon = LoadImage(config::icon_file);
         SetWindowIcon(icon);
         UnloadImage(icon);
     } else {
@@ -63,8 +63,8 @@ int main() {
     }
 
     // Load sprites atlas
-    Texture atlas = LoadTexture(atlas::image_path);
-    Rectangle shield_rect = atlas::get_sprite_rect("shield");
+    Texture atlas = LoadTexture(config::atlas_file);
+    Rectangle shield_rect = atlas::get_sprite_rect(atlas::Shield);
 
     while (!WindowShouldClose()) {
         // Logic
@@ -80,6 +80,7 @@ int main() {
     }
 
     // Cleanup
+    UnloadTexture(atlas);
     CloseWindow();
 
     return 0;

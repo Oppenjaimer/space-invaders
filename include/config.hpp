@@ -13,6 +13,11 @@ namespace config {
     // Screen
     constexpr int screen_width = 1280;
     constexpr int screen_height = 720;
+
+    // Resources
+    constexpr const char* resource_dir = "resources";
+    constexpr const char* icon_file = "icon.png";
+    constexpr const char* atlas_file = "sprites/atlas.png";
 }
 
 /**
