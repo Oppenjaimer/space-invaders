@@ -59,6 +59,16 @@ void game::init(State &state) {
 
     // Initialize player
     player::init(state.player);
+
+    // Initialize shields
+    shield::Shield shield;
+    shield::init(shield);
+    shield.pos.y = config::world_height - config::shield_spacing_bottom - shield.sprite_rect.height;
+
+    for (int i = 0; i < shield_count; i++) {
+        shield.pos.x = config::shield_spacing_left + i * (config::shield_spacing_inner + shield.sprite_rect.width);
+        state.shields[i] = shield;
+    }
 }
 
 void game::free(State &state) {
@@ -68,10 +78,18 @@ void game::free(State &state) {
 
 void game::update(State &state) {
     player::update(state.player);
+
+    for (int i = 0; i < shield_count; i++) {
+        shield::update(state.shields[i]);
+    }
 }
 
 void game::draw_world(const State &state) {
     player::draw(state.atlas, state.player);
+
+    for (int i = 0; i < shield_count; i++) {
+        shield::draw(state.atlas, state.shields[i]);
+    }
 }
 
 void game::draw_screen(const State &state) {

@@ -3,11 +3,16 @@
 #include "raylib.h"
 
 #include "player.hpp"
+#include "shield.hpp"
+
+#include <array>
 
 /**
  * @brief Global game state management.
  */
 namespace game {
+    constexpr int shield_count = 4;
+
     struct State {
         // Textures
         RenderTexture target;
@@ -15,6 +20,7 @@ namespace game {
 
         // Components
         player::Player player;
+        std::array<shield::Shield, shield_count> shields;
     };
 
     /**

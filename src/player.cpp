@@ -1,4 +1,3 @@
-
 #include "atlas.hpp"
 #include "config.hpp"
 #include "player.hpp"
@@ -7,7 +6,7 @@ void player::init(Player& player) {
     player.sprite_rect = atlas::get_sprite_rect(atlas::PlayerNormal);
     player.pos = {
         config::world_width / 2.0f - player.sprite_rect.width,
-        config::world_height - config::player_spacing_y - player.sprite_rect.height
+        config::world_height - config::player_spacing_bottom - player.sprite_rect.height
     };
 
     player.shot_active = false;
@@ -23,10 +22,10 @@ void player::update(Player& player) {
         player.pos.x += config::player_speed;
 
     // Ensure player is within world bounds
-    if (player.pos.x <= config::player_spacing_x)
-        player.pos.x = config::player_spacing_x;
-    else if (player.pos.x >= config::world_width - config::player_spacing_x - player.sprite_rect.width)
-        player.pos.x = config::world_width - config::player_spacing_x - player.sprite_rect.width;
+    if (player.pos.x <= config::player_spacing_sides)
+        player.pos.x = config::player_spacing_sides;
+    else if (player.pos.x >= config::world_width - config::player_spacing_sides - player.sprite_rect.width)
+        player.pos.x = config::world_width - config::player_spacing_sides - player.sprite_rect.width;
 
     // Shoot
     if (IsKeyDown(KEY_SPACE) && !player.shot_active) {

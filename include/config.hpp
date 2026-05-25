@@ -24,10 +24,16 @@ namespace config {
     constexpr const char* atlas_file = "sprites/atlas.png";
 
     // Player
-    constexpr int player_spacing_x = 2;
-    constexpr int player_spacing_y = 10;
+    constexpr int player_spacing_sides = 2;
+    constexpr int player_spacing_bottom = 32;
     constexpr int player_speed = 1;
     constexpr int player_shot_speed = 3;
+
+    // Shields
+    constexpr int shield_spacing_bottom = 48;
+    constexpr int shield_spacing_left = 32;
+    constexpr int shield_spacing_right = 35;
+    constexpr int shield_spacing_inner = 23;
 }
 
 /**
