@@ -27,6 +27,7 @@ namespace config {
     constexpr int player_spacing_x = 2;
     constexpr int player_spacing_y = 10;
     constexpr int player_speed = 1;
+    constexpr int player_shot_speed = 3;
 }
 
 /**

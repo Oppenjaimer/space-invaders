@@ -7,8 +7,14 @@
  */
 namespace player {
     struct Player {
+        // Cannon
         Rectangle sprite_rect;
         Vector2 pos;
+
+        // Shot
+        bool shot_active;
+        Rectangle shot_rect;
+        Vector2 shot_pos;
     };
 
     /**
