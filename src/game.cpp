@@ -125,14 +125,16 @@ void game::draw_screen(const State &state) {
     // Calculate scale to fit the window (keeping aspect ratio)
     float scale_x = (float)GetScreenWidth() / config::world_width;
     float scale_y = (float)GetScreenHeight() / config::world_height;
-    float scale = (scale_x < scale_y) ? scale_x : scale_y;
+
+    int scale = (scale_x < scale_y) ? scale_x : scale_y;
+    if (scale < 1) scale = 1;
 
     Rectangle src_rect = {0, 0, (float)state.target.texture.width, (float)-state.target.texture.height};
     Rectangle dest_rect = {
         (GetScreenWidth() - (config::world_width * scale)) / 2.0f,
         (GetScreenHeight() - (config::world_height * scale)) / 2.0f,
-        config::world_width * scale,
-        config::world_height * scale
+        config::world_width * (float)scale,
+        config::world_height * (float)scale
     };
 
     DrawTexturePro(state.target.texture, src_rect, dest_rect, {0, 0}, 0, WHITE);
