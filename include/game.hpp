@@ -2,6 +2,7 @@
 
 #include "raylib.h"
 
+#include "alien.hpp"
 #include "player.hpp"
 #include "shield.hpp"
 
@@ -12,6 +13,8 @@
  */
 namespace game {
     constexpr int shield_count = 4;
+    constexpr int alien_rows = 5;
+    constexpr int alien_cols = 11;
 
     struct State {
         // Textures
@@ -21,6 +24,7 @@ namespace game {
         // Components
         player::Player player;
         std::array<shield::Shield, shield_count> shields;
+        std::array<alien::Alien, alien_rows * alien_cols> aliens;
     };
 
     /**

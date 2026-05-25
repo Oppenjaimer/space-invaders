@@ -24,7 +24,7 @@ namespace player {
     void init(Player& player);
 
     /**
-     * @brief Handle player movement and firing.
+     * @brief Handle player movement, firing and death.
      * @param player Player to update.
      */
     void update(Player& player);

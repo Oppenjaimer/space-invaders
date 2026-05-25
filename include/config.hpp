@@ -34,6 +34,12 @@ namespace config {
     constexpr int shield_spacing_left = 32;
     constexpr int shield_spacing_right = 35;
     constexpr int shield_spacing_inner = 23;
+
+    // Aliens
+    constexpr int alien_spacing_top = 64;
+    constexpr int alien_spacing_sides = 26;
+    constexpr int alien_spacing_inner_x = 4;
+    constexpr int alien_spacing_inner_y = 8;
 }
 
 /**

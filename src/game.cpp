@@ -69,6 +69,23 @@ void game::init(State &state) {
         shield.pos.x = config::shield_spacing_left + i * (config::shield_spacing_inner + shield.sprite_rect.width);
         state.shields[i] = shield;
     }
+
+    // Initialize aliens
+    alien::Alien alien;
+    alien::init(alien);
+
+    for (int i = 0; i < alien_rows; i++) {
+        for (int j = 0; j < alien_cols; j++) {
+            // Choose alien type depending on row
+            if (i == 0) alien::set_type(alien, alien::Squid);
+            else if (i == 1 || i == 2) alien::set_type(alien, alien::Crab);
+            else if (i == 3 || i == 4) alien::set_type(alien, alien::Octopus);
+
+            alien.pos.x = config::alien_spacing_sides + j * (config::alien_spacing_inner_x + alien.sprite_rect.width);
+            alien.pos.y = config::alien_spacing_top + i * (config::alien_spacing_inner_y + alien.sprite_rect.height);
+            state.aliens[i * alien_cols + j] = alien;
+        }
+    }
 }
 
 void game::free(State &state) {
@@ -82,6 +99,12 @@ void game::update(State &state) {
     for (int i = 0; i < shield_count; i++) {
         shield::update(state.shields[i]);
     }
+
+    for (int i = 0; i < alien_rows; i++) {
+        for (int j = 0; j < alien_cols; j++) {
+            alien::update(state.aliens[i * alien_cols + j]);
+        }
+    }
 }
 
 void game::draw_world(const State &state) {
@@ -89,6 +112,12 @@ void game::draw_world(const State &state) {
 
     for (int i = 0; i < shield_count; i++) {
         shield::draw(state.atlas, state.shields[i]);
+    }
+
+    for (int i = 0; i < alien_rows; i++) {
+        for (int j = 0; j < alien_cols; j++) {
+            alien::draw(state.atlas, state.aliens[i * alien_cols + j]);
+        }
     }
 }
 
