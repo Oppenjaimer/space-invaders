@@ -1,5 +1,4 @@
 #include "atlas.hpp"
-#include "config.hpp"
 #include "shield.hpp"
 
 void shield::init(Shield &shield) {

@@ -82,6 +82,11 @@ void game::init(State &state) {
         }
     }
 
+    // Initialize alien shots
+    for (auto& shot : state.alien_shots) {
+        alien_shot::init(shot);
+    }
+
     // Initialize alien fleet
     fleet::init(state.fleet);
 }
@@ -102,7 +107,11 @@ void game::update(State &state) {
         alien::update(alien);
     }
 
-    fleet::update(state.fleet, state.aliens);
+    for (auto& shot : state.alien_shots) {
+        alien_shot::update(shot);
+    }
+
+    fleet::update(state.fleet, state.aliens, state.alien_shots);
 }
 
 void game::draw_world(const State &state) {
@@ -114,6 +123,10 @@ void game::draw_world(const State &state) {
 
     for (auto& alien : state.aliens) {
         alien::draw(alien, state.atlas);
+    }
+
+    for (auto& shot : state.alien_shots) {
+        alien_shot::draw(shot, state.atlas);
     }
 }
 

@@ -45,7 +45,12 @@ namespace config {
     constexpr int alien_spacing_jump = 2;
     constexpr int alien_jump_x = 2;
     constexpr int alien_jump_y = 8;
-    constexpr float alien_interval = 1.0f / fps;
+    constexpr float alien_move_interval = 1.0f / fps;
+    constexpr float alien_grace_period = 2.0f;
+    constexpr int alien_shot_limit = 3;
+    constexpr float alien_shot_speed = 2;
+    constexpr float alien_shot_interval = 1.0f;
+    constexpr float alien_shot_animation_rate = 0.1f;
 }
 
 /**

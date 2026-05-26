@@ -6,8 +6,6 @@
 #include "player.hpp"
 #include "shield.hpp"
 
-#include <array>
-
 namespace game {
     struct State {
         // Textures
@@ -16,8 +14,9 @@ namespace game {
 
         // Components
         player::Player player;
-        std::array<shield::Shield, config::shield_count> shields;
-        std::array<alien::Alien, config::alien_count> aliens;
+        shield::ShieldArray shields;
+        alien::AlienArray aliens;
+        alien_shot::AlienShotArray alien_shots;
         fleet::Fleet fleet;
     };
 
