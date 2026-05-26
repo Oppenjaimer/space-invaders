@@ -2,16 +2,24 @@
 
 #include "raylib.h"
 
-namespace player {
-    struct Player {
-        // Cannon
+namespace player_shot {
+    struct PlayerShot {
+        bool active;
         Rectangle sprite_rect;
         Vector2 pos;
+    };
 
-        // Shot
-        bool shot_active;
-        Rectangle shot_rect;
-        Vector2 shot_pos;
+    void init(PlayerShot& shot);
+    void update(PlayerShot& shot);
+    void draw(const PlayerShot& shot, const Texture& atlas);
+    void fire(PlayerShot& shot, int x, int y);
+}
+
+namespace player {
+    struct Player {
+        Rectangle sprite_rect;
+        Vector2 pos;
+        player_shot::PlayerShot shot;
     };
 
     void init(Player& player);
