@@ -35,12 +35,20 @@ namespace config {
     constexpr int shield_spacing_left = 32;
     constexpr int shield_spacing_right = 35;
     constexpr int shield_spacing_inner = 23;
+    constexpr int shield_count = 4;
 
     // Aliens
+    constexpr int alien_rows = 5;
+    constexpr int alien_cols = 11;
+    constexpr int alien_count = alien_rows * alien_cols;
     constexpr int alien_spacing_top = 64;
     constexpr int alien_spacing_sides = 26;
     constexpr int alien_spacing_inner_x = 4;
     constexpr int alien_spacing_inner_y = 8;
+    constexpr int alien_spacing_jump = 2;
+    constexpr int alien_jump_x = 2;
+    constexpr int alien_jump_y = 8;
+    constexpr float alien_interval = 1.0f / fps;
 }
 
 /**

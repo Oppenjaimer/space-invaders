@@ -12,10 +12,6 @@
  * @brief Global game state management.
  */
 namespace game {
-    constexpr int shield_count = 4;
-    constexpr int alien_rows = 5;
-    constexpr int alien_cols = 11;
-
     struct State {
         // Textures
         RenderTexture target;
@@ -23,8 +19,9 @@ namespace game {
 
         // Components
         player::Player player;
-        std::array<shield::Shield, shield_count> shields;
-        std::array<alien::Alien, alien_rows * alien_cols> aliens;
+        std::array<shield::Shield, config::shield_count> shields;
+        std::array<alien::Alien, config::alien_count> aliens;
+        fleet::Fleet fleet;
     };
 
     /**
