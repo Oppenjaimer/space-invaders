@@ -1,12 +1,5 @@
-#include "raylib.h"
-
-#include "config.hpp"
 #include "game.hpp"
 
-/**
- * @brief Application entry point.
- * @returns Exit code.
- */
 int main() {
     // Initialize raylib
     SetTraceLogLevel(LOG_WARNING);

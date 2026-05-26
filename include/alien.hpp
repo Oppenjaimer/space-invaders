@@ -6,9 +6,6 @@
 
 #include <array>
 
-/**
- * @brief Alien invaders management.
- */
 namespace alien {
     enum AlienType {
         Squid,  // Top-row
@@ -24,58 +21,19 @@ namespace alien {
         bool alive;
     };
 
-    /**
-     * @brief Set alien type and load its corresponding sprite.
-     * @param alien Alien whose type to set.
-     * @param type Alien type.
-     */
     void set_type(Alien& alien, AlienType type);
-
-    /**
-     * @brief Advance alien animation frame.
-     * @param alien Alien whose frame to advance.
-     */
     void advance_frame(Alien& alien);
-
-    /**
-     * @brief Initialize alien state.
-     * @param alien Alien to initialize.
-     */
     void init(Alien& alien);
-
-    /**
-     * @brief Handle alien firing and death.
-     * @param alien Alien to update.
-     */
     void update(Alien& alien);
-
-    /**
-     * @brief Draw alien to screen.
-     * @param atlas Atlas to fetch sprite from.
-     * @param alien Alien to draw.
-     */
-    void draw(Texture atlas, const Alien& alien);
+    void draw(const Alien& alien, const Texture& atlas);
 }
 
-/**
- * @brief Alien fleet timed movement management.
- */
 namespace fleet {
     struct Fleet {
         float timer;
-        int direction; // 1 right, -1 left
+        int direction; // Right: 1, Left: -1
     };
 
-    /**
-     * @brief Initialize fleet state.
-     * @param fleet Fleet to initialize.
-     */
     void init(Fleet& fleet);
-
-    /**
-     * @brief Handle fleet movement and animation.
-     * @param aliens Array of aliens.
-     * @param fleet Fleet to update.
-     */
-    void update(std::array<alien::Alien, config::alien_count>& aliens, Fleet& fleet);
+    void update(Fleet& fleet, std::array<alien::Alien, config::alien_count>& aliens);
 }

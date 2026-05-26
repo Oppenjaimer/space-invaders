@@ -2,9 +2,6 @@
 
 #include "raylib.h"
 
-/**
- * @brief Global configuration constants.
- */
 namespace config {
     // Application
     constexpr int fps = 60;
@@ -52,7 +49,7 @@ namespace config {
 }
 
 /**
- * @brief Gruvbox Dark color palette.
+ * Gruvbox Dark color palette.
  */
 namespace theme {
     // Background

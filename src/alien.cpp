@@ -1,10 +1,6 @@
 #include "alien.hpp"
 #include "atlas.hpp"
 
-/**
- * @brief Set alien sprite rectangle.
- * @param alien Alien whose sprite rectangle to set.
- */
 static void set_sprite_rect(alien::Alien& alien) {
     if (alien.animation_frame == 0) {
         switch (alien.type) {
@@ -42,7 +38,7 @@ void alien::update(Alien &alien) {
     (void)alien;
 }
 
-void alien::draw(Texture atlas, const Alien &alien) {
+void alien::draw(const Alien &alien, const Texture& atlas) {
     Color color;
     switch (alien.type) {
         case Squid:   color = theme::purple; break;
@@ -58,7 +54,7 @@ void fleet::init(Fleet& fleet) {
     fleet.direction = 1;
 }
 
-void fleet::update(std::array<alien::Alien, config::alien_count>& aliens, Fleet& fleet) {
+void fleet::update(Fleet& fleet, std::array<alien::Alien, config::alien_count>& aliens) {
     // Count alive aliens
     int alive = 0;
     for (const alien::Alien& alien : aliens) {

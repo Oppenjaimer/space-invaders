@@ -3,12 +3,14 @@
 #include "player.hpp"
 
 void player::init(Player& player) {
+    // Cannon
     player.sprite_rect = atlas::get_sprite_rect(atlas::PlayerNormal);
     player.pos = {
         config::world_width / 2.0f - player.sprite_rect.width,
         config::world_height - config::player_spacing_bottom - player.sprite_rect.height
     };
 
+    // Shot
     player.shot_active = false;
     player.shot_rect = atlas::get_sprite_rect(atlas::PlayerShotNormal);
     player.shot_pos = {0, 0}; // Computed from player's position when shooting
@@ -28,7 +30,7 @@ void player::update(Player& player) {
         player.pos.x = config::world_width - config::player_spacing_sides - player.sprite_rect.width;
 
     // Shoot
-    if (IsKeyDown(KEY_SPACE) && !player.shot_active) {
+    if (IsKeyPressed(KEY_SPACE) && !player.shot_active) {
         player.shot_active = true;
         player.shot_pos = {
             player.pos.x + player.sprite_rect.width / 2.0f - player.shot_rect.width / 2.0f,
@@ -45,11 +47,11 @@ void player::update(Player& player) {
         player.shot_active = false;
 }
 
-void player::draw(Texture atlas, const Player& player) {
-    // Draw shot
+void player::draw(const Player& player, const Texture& atlas) {
+    // Shot
     if (player.shot_active)
         DrawTextureRec(atlas, player.shot_rect, player.shot_pos, theme::fg0);
 
-    // Draw cannon
+    // Cannon
     DrawTextureRec(atlas, player.sprite_rect, player.pos, theme::green);
 }

@@ -2,9 +2,6 @@
 
 #include "raylib.h"
 
-/**
- * @brief Sprites atlas handling.
- */
 namespace atlas {
     enum SpriteId {
         AlienExplode,
@@ -65,11 +62,6 @@ namespace atlas {
         {58, 16, 16, 7}     // Ufo
     };
 
-    /**
-     * @brief Get sprite rectangle from atlas.
-     * @param id Sprite ID.
-     * @return Sprite rectangle.
-     */
     inline constexpr Rectangle get_sprite_rect(SpriteId id) {
         return sprites[static_cast<int>(id)];
     }

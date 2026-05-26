@@ -1,11 +1,6 @@
 #include "config.hpp"
 #include "game.hpp"
 
-/**
- * @brief Set raylib resources directory.
- * @param path Directory path.
- * @returns Whether the directory was found.
- */
 static bool set_resource_dir(const char* path) {
     // Check current directory
     if (DirectoryExists(path)) {
@@ -99,26 +94,26 @@ void game::free(State &state) {
 void game::update(State &state) {
     player::update(state.player);
 
-    for (shield::Shield& shield : state.shields) {
+    for (auto& shield : state.shields) {
         shield::update(shield);
     }
 
-    for (alien::Alien& alien : state.aliens) {
+    for (auto& alien : state.aliens) {
         alien::update(alien);
     }
 
-    fleet::update(state.aliens, state.fleet);
+    fleet::update(state.fleet, state.aliens);
 }
 
 void game::draw_world(const State &state) {
-    player::draw(state.atlas, state.player);
+    player::draw(state.player, state.atlas);
 
-    for (const shield::Shield& shield : state.shields) {
-        shield::draw(state.atlas, shield);
+    for (auto& shield : state.shields) {
+        shield::draw(shield, state.atlas);
     }
 
-    for (const alien::Alien& alien : state.aliens) {
-        alien::draw(state.atlas, alien);
+    for (auto& alien : state.aliens) {
+        alien::draw(alien, state.atlas);
     }
 }
 

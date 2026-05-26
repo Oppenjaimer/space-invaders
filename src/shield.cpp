@@ -12,6 +12,6 @@ void shield::update(Shield &shield) {
     (void)shield;
 }
 
-void shield::draw(Texture atlas, const Shield &shield) {
+void shield::draw(const Shield &shield, const Texture& atlas) {
     DrawTextureRec(atlas, shield.sprite_rect, shield.pos, theme::yellow);
 }
