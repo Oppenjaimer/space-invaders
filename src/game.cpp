@@ -96,28 +96,24 @@ void game::free(State &state) {
 void game::update(State &state) {
     player::update(state.player);
 
-    for (int i = 0; i < shield_count; i++) {
-        shield::update(state.shields[i]);
+    for (shield::Shield& shield : state.shields) {
+        shield::update(shield);
     }
 
-    for (int i = 0; i < alien_rows; i++) {
-        for (int j = 0; j < alien_cols; j++) {
-            alien::update(state.aliens[i * alien_cols + j]);
-        }
+    for (alien::Alien& alien : state.aliens) {
+        alien::update(alien);
     }
 }
 
 void game::draw_world(const State &state) {
     player::draw(state.atlas, state.player);
 
-    for (int i = 0; i < shield_count; i++) {
-        shield::draw(state.atlas, state.shields[i]);
+    for (const shield::Shield& shield : state.shields) {
+        shield::draw(state.atlas, shield);
     }
 
-    for (int i = 0; i < alien_rows; i++) {
-        for (int j = 0; j < alien_cols; j++) {
-            alien::draw(state.atlas, state.aliens[i * alien_cols + j]);
-        }
+    for (const alien::Alien& alien : state.aliens) {
+        alien::draw(state.atlas, alien);
     }
 }
 
