@@ -89,6 +89,9 @@ void game::init(State &state) {
 
     // Initialize alien fleet
     fleet::init(state.fleet);
+
+    // Initialize UFO
+    ufo::init(state.ufo);
 }
 
 void game::free(State &state) {
@@ -112,6 +115,7 @@ void game::update(State &state) {
     }
 
     fleet::update(state.fleet, state.aliens, state.alien_shots);
+    ufo::update(state.ufo);
 }
 
 void game::draw_world(const State &state) {
@@ -128,6 +132,8 @@ void game::draw_world(const State &state) {
     for (auto& shot : state.alien_shots) {
         alien_shot::draw(shot, state.atlas);
     }
+
+    ufo::draw(state.ufo, state.atlas);
 }
 
 void game::draw_screen(const State &state) {

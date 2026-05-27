@@ -51,6 +51,11 @@ namespace config {
     constexpr float alien_shot_speed = 2;
     constexpr float alien_shot_interval = 1.0f;
     constexpr float alien_shot_animation_rate = 0.1f;
+
+    // UFO
+    constexpr int ufo_spacing_top = 32;
+    constexpr int ufo_speed = 1;
+    constexpr float ufo_spawn_interval = 5.6f;
 }
 
 /**

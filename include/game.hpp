@@ -5,6 +5,7 @@
 #include "alien.hpp"
 #include "player.hpp"
 #include "shield.hpp"
+#include "ufo.hpp"
 
 namespace game {
     struct State {
@@ -18,6 +19,7 @@ namespace game {
         alien::AlienArray aliens;
         alien_shot::AlienShotArray alien_shots;
         fleet::Fleet fleet;
+        ufo::Ufo ufo;
     };
 
     void init(State& state);
