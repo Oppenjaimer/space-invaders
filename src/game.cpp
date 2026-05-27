@@ -114,7 +114,10 @@ void game::update(State &state) {
         alien_shot::update(shot);
     }
 
-    fleet::update(state.fleet, state.aliens, state.alien_shots);
+    float player_x_min = state.player.pos.x;
+    float player_x_max = player_x_min + state.player.sprite_rect.width;
+    fleet::update(state.fleet, state.aliens, state.alien_shots, player_x_min, player_x_max);
+
     ufo::update(state.ufo);
 }
 

@@ -63,5 +63,5 @@ namespace fleet {
     };
 
     void init(Fleet& fleet);
-    void update(Fleet& fleet, alien::AlienArray& aliens, alien_shot::AlienShotArray& shots);
+    void update(Fleet& fleet, alien::AlienArray& aliens, alien_shot::AlienShotArray& shots, float player_x_min, float player_x_max);
 }

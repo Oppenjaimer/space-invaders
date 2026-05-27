@@ -54,8 +54,8 @@ namespace config {
 
     // UFO
     constexpr int ufo_spacing_top = 32;
-    constexpr int ufo_speed = 1;
-    constexpr float ufo_spawn_interval = 5.6f;
+    constexpr float ufo_speed = 0.85;
+    constexpr float ufo_spawn_interval = 25.6f;
 }
 
 /**

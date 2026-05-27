@@ -55,7 +55,7 @@ static void fleet_move(fleet::Fleet& fleet, alien::AlienArray& aliens) {
     if (hit_edge) fleet.direction *= -1;
 }
 
-static void fleet_fire(fleet::Fleet& fleet, alien::AlienArray& aliens, alien_shot::AlienShotArray& shots) {
+static void fleet_fire(fleet::Fleet& fleet, alien::AlienArray& aliens, alien_shot::AlienShotArray& shots, float player_x_min, float player_x_max) {
     // Find available shot slot
     alien_shot::AlienShot* available_shot = nullptr;
     for (auto& shot : shots) {
@@ -82,17 +82,50 @@ static void fleet_fire(fleet::Fleet& fleet, alien::AlienArray& aliens, alien_sho
     // No active columns found
     if (active_cols.empty()) return;
 
-    // Pick random column
-    int random_idx = GetRandomValue(0, active_cols.size() - 1);
-    int target_col = active_cols[random_idx];
+    // Pick random shot type
+    alien_shot::ShotType type = static_cast<alien_shot::ShotType>(GetRandomValue(0, 2));
+
+    int target_col = -1;
+    if (type == alien_shot::Rolling) {
+        // Choose column above player
+        for (int col : active_cols) {
+            for (int i = 0; i < config::alien_rows; i++) {
+                // Find any alive alien to get the column position
+                int idx = i * config::alien_cols + col;
+                if (!aliens[idx].alive) continue;
+
+                float alien_x_min = aliens[idx].pos.x;
+                float alien_x_max = alien_x_min + aliens[idx].sprite_rect.width;
+
+                // Check if alien column interval overlaps player interval
+                if (alien_x_max >= player_x_min && alien_x_min <= player_x_max) {
+                    target_col = col;
+                    break;
+                }
+
+                // Checking the first alive alien in the column is enough
+                break;
+            }
+
+            // Column above player already found
+            if (target_col != -1) break;
+        }
+
+        if (target_col == -1) {
+            // No column above player found, fallback to random column
+            int random_idx = GetRandomValue(0, active_cols.size() - 1);
+            target_col = active_cols[random_idx];
+        }
+    } else {
+        // Pick random column
+        int random_idx = GetRandomValue(0, active_cols.size() - 1);
+        target_col = active_cols[random_idx];
+    }
 
     // Find lowest alien in target column
     for (int i = config::alien_rows - 1; i >= 0; i--) {
         int idx = i * config::alien_cols + target_col;
         if (aliens[idx].alive) {
-            // Pick random shot type
-            alien_shot::ShotType type = static_cast<alien_shot::ShotType>(GetRandomValue(0, 2));
-
             float x = aliens[idx].pos.x + aliens[idx].sprite_rect.width / 2.0f - available_shot->sprite_rect.width / 2.0f;
             float y = aliens[idx].pos.y + aliens[idx].sprite_rect.height;
 
@@ -190,7 +223,7 @@ void fleet::init(Fleet& fleet) {
     fleet.direction = 1;
 }
 
-void fleet::update(Fleet& fleet, alien::AlienArray& aliens, alien_shot::AlienShotArray& shots) {
+void fleet::update(Fleet& fleet, alien::AlienArray& aliens, alien_shot::AlienShotArray& shots, float player_x_min, float player_x_max) {
     // Count alive aliens
     int alive = 0;
     for (const alien::Alien& alien : aliens) {
@@ -209,5 +242,5 @@ void fleet::update(Fleet& fleet, alien::AlienArray& aliens, alien_shot::AlienSho
     // Firing
     fleet.shot_timer -= GetFrameTime();
     if (fleet.shot_timer <= 0)
-        fleet_fire(fleet, aliens, shots);
+        fleet_fire(fleet, aliens, shots, player_x_min, player_x_max);
 }
