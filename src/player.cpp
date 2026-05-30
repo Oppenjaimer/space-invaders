@@ -41,13 +41,22 @@ void player::draw(const Player& player, const Texture& atlas) {
     player_shot::draw(player.shot, atlas);
 }
 
-void player_shot::init(PlayerShot &shot) {
+Rectangle player::get_hitbox(const Player &player) {
+    return {
+        player.pos.x,
+        player.pos.y,
+        player.sprite_rect.width,
+        player.sprite_rect.height
+    };
+}
+
+void player_shot::init(PlayerShot& shot) {
     shot.active = false;
     shot.sprite_rect = atlas::get_sprite_rect(atlas::PlayerShotNormal);
     shot.pos = {0, 0}; // Computed from player's position when firing
 }
 
-void player_shot::update(PlayerShot &shot) {
+void player_shot::update(PlayerShot& shot) {
     // Move upwards
     if (shot.active)
         shot.pos.y -= config::player_shot_speed;
@@ -57,15 +66,24 @@ void player_shot::update(PlayerShot &shot) {
         shot.active = false;
 }
 
-void player_shot::draw(const PlayerShot &shot, const Texture &atlas) {
+void player_shot::draw(const PlayerShot& shot, const Texture &atlas) {
     if (shot.active)
         DrawTextureRec(atlas, shot.sprite_rect, shot.pos, theme::fg0);
 }
 
-void player_shot::fire(PlayerShot &shot, int x, int y) {
+void player_shot::fire(PlayerShot& shot, int x, int y) {
     if (shot.active) return;
 
     shot.active = true;
     shot.pos.x = x;
     shot.pos.y = y;
+}
+
+Rectangle player_shot::get_hitbox(const PlayerShot& shot) {
+    return {
+        shot.pos.x,
+        shot.pos.y,
+        shot.sprite_rect.width,
+        shot.sprite_rect.height
+    };
 }

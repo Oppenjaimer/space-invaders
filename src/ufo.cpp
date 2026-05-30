@@ -2,7 +2,7 @@
 #include "config.hpp"
 #include "ufo.hpp"
 
-void ufo::init(Ufo &ufo) {
+void ufo::init(Ufo& ufo) {
     ufo.sprite_rect = atlas::get_sprite_rect(atlas::Ufo);
     ufo.pos = {0, 0}; // Chosen randomly on spawn
     ufo.spawn_timer = 0.0f;
@@ -10,7 +10,7 @@ void ufo::init(Ufo &ufo) {
     ufo.alive = false;
 }
 
-void ufo::update(Ufo &ufo) {
+void ufo::update(Ufo& ufo) {
     // Spawn
     if (!ufo.alive) ufo.spawn_timer += GetFrameTime();
     if (ufo.spawn_timer >= config::ufo_spawn_interval) {
@@ -34,7 +34,16 @@ void ufo::update(Ufo &ufo) {
     }
 }
 
-void ufo::draw(const Ufo &ufo, const Texture &atlas) {
+void ufo::draw(const Ufo& ufo, const Texture &atlas) {
     if (ufo.alive)
         DrawTextureRec(atlas, ufo.sprite_rect, ufo.pos, theme::red);
+}
+
+Rectangle ufo::get_hitbox(const Ufo& ufo) {
+    return {
+        ufo.pos.x,
+        ufo.pos.y,
+        ufo.sprite_rect.width,
+        ufo.sprite_rect.height
+    };
 }

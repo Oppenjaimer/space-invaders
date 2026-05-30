@@ -29,6 +29,7 @@ namespace alien_shot {
     void update(AlienShot& shot);
     void draw(const AlienShot& shot, const Texture& atlas);
     void fire(AlienShot& shot, ShotType type, int x, int y);
+    Rectangle get_hitbox(const AlienShot& shot);
 }
 
 namespace alien {
@@ -44,6 +45,8 @@ namespace alien {
         int animation_frame; // Frames: 0,1
         Vector2 pos;
         bool alive;
+        bool exploding;
+        float explosion_timer;
     };
 
     using AlienArray = std::array<alien::Alien, config::alien_count>;
@@ -53,6 +56,8 @@ namespace alien {
     void init(Alien& alien);
     void update(Alien& alien);
     void draw(const Alien& alien, const Texture& atlas);
+    void explode(Alien& alien);
+    Rectangle get_hitbox(const Alien& alien);
 }
 
 namespace fleet {

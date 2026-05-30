@@ -34,7 +34,44 @@ static bool set_resource_dir(const char* path) {
     return false;
 }
 
-void game::init(State &state) {
+static void check_collisions(game::State& state) {
+    Rectangle player_shot_hitbox = player_shot::get_hitbox(state.player.shot);
+
+    // Player shot hitting aliens
+    for (auto& alien : state.aliens) {
+        if (!alien.alive) continue;
+
+        Rectangle alien_hitbox = alien::get_hitbox(alien);
+        if (CheckCollisionRecs(player_shot_hitbox, alien_hitbox)) {
+            state.player.shot.active = false;
+            alien::explode(alien);
+        }
+    }
+
+    // Player shot hitting UFO
+    Rectangle ufo_hitbox = ufo::get_hitbox(state.ufo);
+    if (CheckCollisionRecs(player_shot_hitbox, ufo_hitbox)) {
+        state.player.shot.active = false;
+        state.ufo.alive = false;
+    }
+
+    // Player shot hitting alien shot
+    // TODO
+
+    // Player shot hitting shields
+    // TODO
+
+    // Alien shot hitting player
+    // TODO
+
+    // Alien shot hitting shields
+    // TODO
+
+    // Alien hitting shields
+    // TODO
+}
+
+void game::init(State& state) {
     // Set resources directory and app icon
     bool found = set_resource_dir(config::resource_dir);
     if (found) {
@@ -94,12 +131,12 @@ void game::init(State &state) {
     ufo::init(state.ufo);
 }
 
-void game::free(State &state) {
+void game::free(State& state) {
     UnloadTexture(state.atlas);
     UnloadRenderTexture(state.target);
 }
 
-void game::update(State &state) {
+void game::update(State& state) {
     player::update(state.player);
 
     for (auto& shield : state.shields) {
@@ -119,9 +156,11 @@ void game::update(State &state) {
     fleet::update(state.fleet, state.aliens, state.alien_shots, player_x_min, player_x_max);
 
     ufo::update(state.ufo);
+
+    check_collisions(state);
 }
 
-void game::draw_world(const State &state) {
+void game::draw_world(const State& state) {
     player::draw(state.player, state.atlas);
 
     for (auto& shield : state.shields) {
@@ -139,7 +178,7 @@ void game::draw_world(const State &state) {
     ufo::draw(state.ufo, state.atlas);
 }
 
-void game::draw_screen(const State &state) {
+void game::draw_screen(const State& state) {
     // Calculate scale to fit the window (keeping aspect ratio)
     float scale_x = (float)GetScreenWidth() / config::world_width;
     float scale_y = (float)GetScreenHeight() / config::world_height;

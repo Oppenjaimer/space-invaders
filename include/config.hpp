@@ -24,8 +24,8 @@ namespace config {
     // Player
     constexpr int player_spacing_sides = 2;
     constexpr int player_spacing_bottom = 32;
-    constexpr int player_speed = 1;
-    constexpr int player_shot_speed = 3;
+    constexpr float player_speed = 1.2f;
+    constexpr float player_shot_speed = 3.5f;
 
     // Shields
     constexpr int shield_spacing_bottom = 48;
@@ -48,14 +48,17 @@ namespace config {
     constexpr float alien_move_interval = 1.0f / fps;
     constexpr float alien_grace_period = 2.0f;
     constexpr int alien_shot_limit = 3;
-    constexpr float alien_shot_speed = 2;
+    constexpr float alien_shot_speed = 2.0f;
     constexpr float alien_shot_interval = 1.0f;
     constexpr float alien_shot_animation_rate = 0.1f;
 
     // UFO
     constexpr int ufo_spacing_top = 32;
-    constexpr float ufo_speed = 0.85;
+    constexpr float ufo_speed = 0.8f;
     constexpr float ufo_spawn_interval = 25.6f;
+
+    // Explosions
+    constexpr float explosion_time = 0.3f;
 }
 
 /**

@@ -137,28 +137,36 @@ static void fleet_fire(fleet::Fleet& fleet, alien::AlienArray& aliens, alien_sho
     }
 }
 
-void alien::set_type(Alien &alien, AlienType type) {
+void alien::set_type(Alien& alien, AlienType type) {
     alien.type = type;
     set_sprite_rect(alien);
 }
 
-void alien::advance_frame(Alien &alien) {
+void alien::advance_frame(Alien& alien) {
     alien.animation_frame = (alien.animation_frame == 0) ? 1 : 0;
     set_sprite_rect(alien);
 }
 
-void alien::init(Alien &alien) {
+void alien::init(Alien& alien) {
     alien.animation_frame = 0;
     alien.pos = {0, 0}; // Computed when creating all aliens
     alien.alive = true;
+    alien.exploding = false;
+    alien.explosion_timer = 0.0f; // Set when hit
 }
 
-void alien::update(Alien &alien) {
-    // TODO
-    (void)alien;
+void alien::update(Alien& alien) {
+    if (alien.exploding) {
+        alien.explosion_timer -= GetFrameTime();
+
+        if (alien.explosion_timer <= 0.0f)
+            alien.exploding = false;
+    }
 }
 
-void alien::draw(const Alien &alien, const Texture& atlas) {
+void alien::draw(const Alien& alien, const Texture& atlas) {
+    if (!alien.alive && !alien.exploding) return;
+
     Color color;
     switch (alien.type) {
         case Squid:   color = theme::purple; break;
@@ -166,7 +174,31 @@ void alien::draw(const Alien &alien, const Texture& atlas) {
         case Octopus: color = theme::aqua;   break;
     }
 
-    DrawTextureRec(atlas, alien.sprite_rect, alien.pos, color);
+    if (alien.exploding) {
+        Rectangle explosion_rect = atlas::get_sprite_rect(atlas::AlienExplode);
+        DrawTextureRec(atlas, explosion_rect, alien.pos, color);
+    } else if (alien.alive) {
+        DrawTextureRec(atlas, alien.sprite_rect, alien.pos, color);
+    }
+}
+
+void alien::explode(Alien& alien) {
+    if (alien.alive && !alien.exploding) {
+        alien.alive = false;
+        alien.exploding = true;
+        alien.explosion_timer = config::explosion_time;
+    }
+}
+
+Rectangle alien::get_hitbox(const Alien& alien) {
+    if (!alien.alive || alien.exploding) return {0, 0, 0, 0};
+
+    return {
+        alien.pos.x,
+        alien.pos.y,
+        alien.sprite_rect.width,
+        alien.sprite_rect.height
+    };
 }
 
 void alien_shot::advance_frame(AlienShot &shot) {
@@ -217,6 +249,15 @@ void alien_shot::fire(AlienShot &shot, ShotType type, int x, int y) {
     set_sprite_rect(shot);
 }
 
+Rectangle alien_shot::get_hitbox(const AlienShot &shot) {
+    return {
+        shot.pos.x,
+        shot.pos.y,
+        shot.sprite_rect.width,
+        shot.sprite_rect.height
+    };
+}
+
 void fleet::init(Fleet& fleet) {
     fleet.shot_timer = config::alien_grace_period;
     fleet.move_timer = 0.0f;
@@ -224,9 +265,10 @@ void fleet::init(Fleet& fleet) {
 }
 
 void fleet::update(Fleet& fleet, alien::AlienArray& aliens, alien_shot::AlienShotArray& shots, float player_x_min, float player_x_max) {
-    // Count alive aliens
+    // Count alive aliens and time explosions
     int alive = 0;
-    for (const alien::Alien& alien : aliens) {
+    for (alien::Alien& alien : aliens) {
+        alien::update(alien);
         if (alien.alive) alive++;
     }
 

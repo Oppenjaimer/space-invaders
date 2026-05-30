@@ -14,4 +14,5 @@ namespace ufo {
     void init(Ufo& ufo);
     void update(Ufo& ufo);
     void draw(const Ufo& ufo, const Texture& atlas);
+    Rectangle get_hitbox(const Ufo& ufo);
 }

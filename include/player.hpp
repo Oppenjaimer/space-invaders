@@ -13,6 +13,8 @@ namespace player_shot {
     void update(PlayerShot& shot);
     void draw(const PlayerShot& shot, const Texture& atlas);
     void fire(PlayerShot& shot, int x, int y);
+    void explode(PlayerShot& shot);
+    Rectangle get_hitbox(const PlayerShot& shot);
 }
 
 namespace player {
@@ -25,4 +27,5 @@ namespace player {
     void init(Player& player);
     void update(Player& player);
     void draw(const Player& player, const Texture& atlas);
+    Rectangle get_hitbox(const Player& player);
 }
