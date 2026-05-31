@@ -3,6 +3,7 @@
 #include "player.hpp"
 
 void player::init(Player& player) {
+    player.alive = true;
     player.sprite_rect = atlas::get_sprite_rect(atlas::PlayerNormal);
     player.pos = {
         config::world_width / 2.0f - player.sprite_rect.width,
@@ -10,9 +11,22 @@ void player::init(Player& player) {
     };
 
     player_shot::init(player.shot);
+
+    player.exploding = false;
+    player.explosion_timer = 0.0f; // Set when hit
 }
 
 void player::update(Player& player) {
+    // Explode
+    if (player.exploding) {
+        player.explosion_timer -= GetFrameTime();
+
+        if (player.explosion_timer <= 0.0f)
+            player.exploding = false;
+    }
+
+    if (!player.alive) return;
+
     // Move horizontally
     if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT))
         player.pos.x -= config::player_speed;
@@ -37,8 +51,23 @@ void player::update(Player& player) {
 }
 
 void player::draw(const Player& player, const Texture& atlas) {
-    DrawTextureRec(atlas, player.sprite_rect, player.pos, theme::green);
+    if (player.exploding) {
+        Rectangle explosion_rect = atlas::get_sprite_rect(atlas::PlayerExplode1);
+        DrawTextureRec(atlas, explosion_rect, player.pos, theme::green);
+    } else if (player.alive) {
+        DrawTextureRec(atlas, player.sprite_rect, player.pos, theme::green);
+    }
+
     player_shot::draw(player.shot, atlas);
+}
+
+void player::explode(Player& player) {
+    if (player.alive && !player.exploding) {
+        player.alive = false;
+        player.shot.active = false;
+        player.exploding = true;
+        player.explosion_timer = config::player_explosion_time;
+    }
 }
 
 Rectangle player::get_hitbox(const Player &player) {

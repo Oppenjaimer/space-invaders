@@ -35,13 +35,15 @@ static bool set_resource_dir(const char* path) {
 }
 
 static void check_collisions(game::State& state) {
+    Rectangle player_hitbox = player::get_hitbox(state.player);
     Rectangle player_shot_hitbox = player_shot::get_hitbox(state.player.shot);
 
-    // Player shot hitting aliens
+    // Aliens
     for (auto& alien : state.aliens) {
         if (!alien.alive) continue;
-
         Rectangle alien_hitbox = alien::get_hitbox(alien);
+
+        // Player shot hitting aliens
         if (CheckCollisionRecs(player_shot_hitbox, alien_hitbox)) {
             state.player.shot.active = false;
             alien::explode(alien);
@@ -55,13 +57,26 @@ static void check_collisions(game::State& state) {
         state.ufo.alive = false;
     }
 
-    // Player shot hitting alien shot
-    // TODO
+    // Alien shots
+    for (auto& shot : state.alien_shots) {
+        if (!shot.active) continue;
+        Rectangle alien_shot_hitbox = alien_shot::get_hitbox(shot);
+
+        // Player shot hitting alien shot
+        if (state.player.shot.active && CheckCollisionRecs(player_shot_hitbox, alien_shot_hitbox)) {
+            state.player.shot.active = false;
+            alien_shot::explode(shot);
+        }
+
+        // Alien shot hitting player
+        if (state.player.alive && CheckCollisionRecs(alien_shot_hitbox, player_hitbox)) {
+            shot.active = false;
+            player::explode(state.player);
+            // TODO: game over
+        }
+    }
 
     // Player shot hitting shields
-    // TODO
-
-    // Alien shot hitting player
     // TODO
 
     // Alien shot hitting shields

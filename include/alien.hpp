@@ -20,6 +20,8 @@ namespace alien_shot {
         int animation_frame; // Frames: 0,1,2,3
         float animation_timer;
         Vector2 pos;
+        bool exploding;
+        float explosion_timer;
     };
 
     using AlienShotArray = std::array<alien_shot::AlienShot, config::alien_shot_limit>;
@@ -29,6 +31,7 @@ namespace alien_shot {
     void update(AlienShot& shot);
     void draw(const AlienShot& shot, const Texture& atlas);
     void fire(AlienShot& shot, ShotType type, int x, int y);
+    void explode(AlienShot& shot);
     Rectangle get_hitbox(const AlienShot& shot);
 }
 

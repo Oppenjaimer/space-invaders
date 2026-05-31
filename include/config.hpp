@@ -59,6 +59,7 @@ namespace config {
 
     // Explosions
     constexpr float explosion_time = 0.3f;
+    constexpr float player_explosion_time = 1.0f;
 }
 
 /**

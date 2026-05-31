@@ -211,6 +211,8 @@ void alien_shot::init(AlienShot &shot) {
     shot.animation_frame = 0;
     shot.animation_timer = 0;
     shot.pos = {0, 0}; // Computed from alien's position when firing
+    shot.exploding = false;
+    shot.explosion_timer = 0.0f; // Set when hit
 }
 
 void alien_shot::update(AlienShot &shot) {
@@ -230,11 +232,23 @@ void alien_shot::update(AlienShot &shot) {
         advance_frame(shot);
         shot.animation_timer -= config::alien_shot_animation_rate;
     }
+
+    // Explode
+    if (shot.exploding) {
+        shot.explosion_timer -= GetFrameTime();
+
+        if (shot.explosion_timer <= 0.0f)
+            shot.exploding = false;
+    }
 }
 
 void alien_shot::draw(const AlienShot &shot, const Texture &atlas) {
-    if (shot.active)
+    if (shot.exploding) {
+        Rectangle explosion_rect = atlas::get_sprite_rect(atlas::AlienShotExplode);
+        DrawTextureRec(atlas, explosion_rect, shot.pos, WHITE);
+    } else if (shot.active) {
         DrawTextureRec(atlas, shot.sprite_rect, shot.pos, theme::fg0);
+    }
 }
 
 void alien_shot::fire(AlienShot &shot, ShotType type, int x, int y) {
@@ -247,6 +261,14 @@ void alien_shot::fire(AlienShot &shot, ShotType type, int x, int y) {
     shot.pos.y = y;
 
     set_sprite_rect(shot);
+}
+
+void alien_shot::explode(AlienShot& shot) {
+    if (shot.active && !shot.exploding) {
+        shot.active = false;
+        shot.exploding = true;
+        shot.explosion_timer = config::explosion_time;
+    }
 }
 
 Rectangle alien_shot::get_hitbox(const AlienShot &shot) {
