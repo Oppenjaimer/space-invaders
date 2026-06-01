@@ -40,19 +40,26 @@ static void check_collisions(game::State& state) {
 
     // Aliens
     for (auto& alien : state.aliens) {
-        if (!alien.alive) continue;
+        if (!alien.alive || alien.exploding) continue;
         Rectangle alien_hitbox = alien::get_hitbox(alien);
 
         // Player shot hitting aliens
-        if (CheckCollisionRecs(player_shot_hitbox, alien_hitbox)) {
+        if (state.player.shot.active && CheckCollisionRecs(player_shot_hitbox, alien_hitbox)) {
             state.player.shot.active = false;
             alien::explode(alien);
+        }
+
+        // Alien hitting shields
+        for (auto& shield : state.shields) {
+            Rectangle shield_hitbox = shield::get_hitbox(shield);
+            if (CheckCollisionRecs(alien_hitbox, shield_hitbox))
+                shield::apply_alien_overlap(shield, alien_hitbox);
         }
     }
 
     // Player shot hitting UFO
     Rectangle ufo_hitbox = ufo::get_hitbox(state.ufo);
-    if (CheckCollisionRecs(player_shot_hitbox, ufo_hitbox)) {
+    if (state.player.shot.active && CheckCollisionRecs(player_shot_hitbox, ufo_hitbox)) {
         state.player.shot.active = false;
         state.ufo.alive = false;
     }
@@ -74,16 +81,29 @@ static void check_collisions(game::State& state) {
             player::explode(state.player);
             // TODO: game over
         }
+
+        // Alien shot hitting shields
+        for (auto& shield : state.shields) {
+            Rectangle shield_hitbox = shield::get_hitbox(shield);
+            if (CheckCollisionRecs(alien_shot_hitbox, shield_hitbox)) {
+                if (shield::apply_damage(shield, alien_shot_hitbox, false)) {
+                    alien_shot::explode(shot);
+                    break;
+                }
+            }
+        }
     }
 
     // Player shot hitting shields
-    // TODO
-
-    // Alien shot hitting shields
-    // TODO
-
-    // Alien hitting shields
-    // TODO
+    for (auto& shield : state.shields) {
+        Rectangle shield_hitbox = shield::get_hitbox(shield);
+        if (CheckCollisionRecs(player_shot_hitbox, shield_hitbox)) {
+            if (shield::apply_damage(shield, player_shot_hitbox, true)) {
+                player_shot::explode(state.player.shot);
+                break;
+            }
+        }
+    }
 }
 
 void game::init(State& state) {
@@ -103,19 +123,24 @@ void game::init(State& state) {
 
     // Load sprites atlas
     state.atlas = LoadTexture(config::atlas_file);
+    Image atlas_image = LoadImage(config::atlas_file);
 
     // Initialize player
     player::init(state.player);
 
     // Initialize shields
     shield::Shield shield;
-    shield::init(shield);
-    shield.pos.y = config::world_height - config::shield_spacing_bottom - shield.sprite_rect.height;
+    shield::init(shield, atlas_image);
 
     for (int i = 0; i < config::shield_count; i++) {
-        shield.pos.x = config::shield_spacing_left + i * (config::shield_spacing_inner + shield.sprite_rect.width);
-        state.shields[i] = shield;
+        shield::init(state.shields[i], atlas_image);
+        state.shields[i].pos.x = config::shield_spacing_left + i * (config::shield_spacing_inner + shield.texture.width);
+        state.shields[i].pos.y = config::world_height - config::shield_spacing_bottom - shield.texture.height;
     }
+
+    // Free shield template
+    shield::free(shield);
+    UnloadImage(atlas_image);
 
     // Initialize aliens
     alien::Alien alien;
@@ -147,6 +172,10 @@ void game::init(State& state) {
 }
 
 void game::free(State& state) {
+    for (auto& shield : state.shields) {
+        shield::free(shield);
+    }
+
     UnloadTexture(state.atlas);
     UnloadRenderTexture(state.target);
 }
@@ -179,7 +208,7 @@ void game::draw_world(const State& state) {
     player::draw(state.player, state.atlas);
 
     for (auto& shield : state.shields) {
-        shield::draw(shield, state.atlas);
+        shield::draw(shield);
     }
 
     for (auto& alien : state.aliens) {

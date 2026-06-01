@@ -245,7 +245,12 @@ void alien_shot::update(AlienShot &shot) {
 void alien_shot::draw(const AlienShot &shot, const Texture &atlas) {
     if (shot.exploding) {
         Rectangle explosion_rect = atlas::get_sprite_rect(atlas::AlienShotExplode);
-        DrawTextureRec(atlas, explosion_rect, shot.pos, WHITE);
+        Vector2 pos = {
+            shot.pos.x + shot.sprite_rect.width / 2.0f - explosion_rect.width / 2.0f,
+            shot.pos.y + shot.sprite_rect.height - explosion_rect.height / 2.0f
+        };
+
+        DrawTextureRec(atlas, explosion_rect, pos, WHITE);
     } else if (shot.active) {
         DrawTextureRec(atlas, shot.sprite_rect, shot.pos, theme::fg0);
     }

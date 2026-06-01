@@ -67,6 +67,7 @@ void player::explode(Player& player) {
         player.alive = false;
         player.shot.active = false;
         player.exploding = true;
+        player.shot.exploding = false;
         player.explosion_timer = config::player_explosion_time;
     }
 }
@@ -84,6 +85,8 @@ void player_shot::init(PlayerShot& shot) {
     shot.active = false;
     shot.sprite_rect = atlas::get_sprite_rect(atlas::PlayerShotNormal);
     shot.pos = {0, 0}; // Computed from player's position when firing
+    shot.exploding = false;
+    shot.explosion_timer = 0.0f; // Set when hit
 }
 
 void player_shot::update(PlayerShot& shot) {
@@ -94,19 +97,40 @@ void player_shot::update(PlayerShot& shot) {
     // Deactivate shot when out of world bounds
     if (shot.active && shot.pos.y < 0)
         shot.active = false;
+
+    // Explode
+    if (shot.exploding) {
+        shot.explosion_timer -= GetFrameTime();
+
+        if (shot.explosion_timer <= 0.0f)
+            shot.exploding = false;
+    }
 }
 
 void player_shot::draw(const PlayerShot& shot, const Texture &atlas) {
-    if (shot.active)
+    if (shot.exploding) {
+        Rectangle explosion_rect = atlas::get_sprite_rect(atlas::PlayerShotExplode);
+        Vector2 pos = {shot.pos.x - explosion_rect.width / 2.0f, shot.pos.y - explosion_rect.height / 2.0f};
+        DrawTextureRec(atlas, explosion_rect, pos, WHITE);
+    } else if (shot.active) {
         DrawTextureRec(atlas, shot.sprite_rect, shot.pos, theme::fg0);
+    }
 }
 
 void player_shot::fire(PlayerShot& shot, int x, int y) {
-    if (shot.active) return;
+    if (shot.active || shot.exploding) return;
 
     shot.active = true;
     shot.pos.x = x;
     shot.pos.y = y;
+}
+
+void player_shot::explode(PlayerShot& shot) {
+    if (shot.active && !shot.exploding) {
+        shot.active = false;
+        shot.exploding = true;
+        shot.explosion_timer = config::explosion_time;
+    }
 }
 
 Rectangle player_shot::get_hitbox(const PlayerShot& shot) {
