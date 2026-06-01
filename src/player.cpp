@@ -52,7 +52,8 @@ void player::update(Player& player) {
 
 void player::draw(const Player& player, const Texture& atlas) {
     if (player.exploding) {
-        Rectangle explosion_rect = atlas::get_sprite_rect(atlas::PlayerExplode1);
+        int frame_toggle = (int)(player.explosion_timer / config::player_flash_time) % 2;
+        Rectangle explosion_rect = atlas::get_sprite_rect(frame_toggle ? atlas::PlayerExplode1 : atlas::PlayerExplode2);
         DrawTextureRec(atlas, explosion_rect, player.pos, theme::green);
     } else if (player.alive) {
         DrawTextureRec(atlas, player.sprite_rect, player.pos, theme::green);
