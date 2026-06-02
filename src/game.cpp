@@ -134,6 +134,15 @@ static void draw_ui(const game::State& state) {
         };
         DrawTextureRec(state.atlas, state.player.sprite_rect, pos, theme::green);
     }
+
+    // Game over text
+    if (state.game_over) {
+        int text_width = MeasureText(config::game_over_text, config::game_over_size);
+        int center_x = config::world_width / 2 - text_width / 2;
+        int center_y = config::game_over_spacing_top;
+
+        DrawText(config::game_over_text, center_x, center_y, config::game_over_size, theme::red);
+    }
 }
 
 void game::init(State& state) {
@@ -199,6 +208,10 @@ void game::init(State& state) {
 
     // Initialize UFO
     ufo::init(state.ufo);
+
+    // Initialize game over variables
+    state.game_over = false;
+    state.game_over_timer = 0.0f; // Set when over
 }
 
 void game::free(State& state) {
@@ -211,6 +224,17 @@ void game::free(State& state) {
 }
 
 void game::update(State& state) {
+    // Freeze everything and count down to restart if game over
+    if (state.game_over) {
+        state.game_over_timer -= GetFrameTime();
+
+        if (state.game_over_timer <= 0.0f)
+            restart(state);
+
+        return;
+    }
+
+    // Normal game loop
     player::update(state.player);
 
     for (auto& shield : state.shields) {
@@ -232,6 +256,66 @@ void game::update(State& state) {
     ufo::update(state.ufo);
 
     check_collisions(state);
+
+    // Check game over
+    if (!state.player.alive && !state.player.exploding && state.player.lives <= 0) {
+        state.game_over = true;
+        state.game_over_timer = config::game_over_time;
+    }
+}
+
+void game::restart(State& state) {
+    state.game_over = false;
+    state.game_over_timer = 0.0f; // Set when over
+
+    // Free shields
+    for (auto& shield : state.shields) {
+        shield::free(shield);
+    }
+
+    // Reload atlas for image generation
+    Image atlas = LoadImage(config::atlas_file);
+
+    // Reset player
+    player::init(state.player);
+
+    // Reset shields
+    shield::Shield shield;
+    shield::init(shield, atlas);
+
+    for (int i = 0; i < config::shield_count; i++) {
+        shield::init(state.shields[i], atlas);
+        state.shields[i].pos.x = config::shield_spacing_left + i * (config::shield_spacing_inner + shield.texture.width);
+        state.shields[i].pos.y = config::world_height - config::shield_spacing_bottom - shield.texture.height;
+    }
+
+    shield::free(shield);
+    UnloadImage(atlas);
+
+    // Reset aliens
+    alien::Alien alien;
+    alien::init(alien);
+
+    for (int i = 0; i < config::alien_rows; i++) {
+        for (int j = 0; j < config::alien_cols; j++) {
+            if (i == 0) alien::set_type(alien, alien::Squid);
+            else if (i == 1 || i == 2) alien::set_type(alien, alien::Crab);
+            else if (i == 3 || i == 4) alien::set_type(alien, alien::Octopus);
+
+            alien.pos.x = config::alien_spacing_sides + j * (config::alien_spacing_inner_x + alien.sprite_rect.width);
+            alien.pos.y = config::alien_spacing_top + i * (config::alien_spacing_inner_y + alien.sprite_rect.height);
+            state.aliens[i * config::alien_cols + j] = alien;
+        }
+    }
+
+    // Reset alien shots
+    for (auto& shot : state.alien_shots) {
+        alien_shot::init(shot);
+    }
+
+    // Reset fleet and UFO
+    fleet::init(state.fleet);
+    ufo::init(state.ufo);
 }
 
 void game::draw_world(const State& state) {

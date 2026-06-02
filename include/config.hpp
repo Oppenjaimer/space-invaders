@@ -68,6 +68,12 @@ namespace config {
     constexpr float lives_spacing_left = 5.0f;
     constexpr float lives_spacing_bottom = 4.0f;
     constexpr float lives_spacing_inner = 15.0f;
+
+    // Game over
+    constexpr const char* game_over_text = "GAME OVER";
+    constexpr float game_over_time = 4.0f;
+    constexpr int game_over_size = 10;
+    constexpr int game_over_spacing_top = 48;
 }
 
 /**
