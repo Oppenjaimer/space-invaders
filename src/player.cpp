@@ -4,6 +4,7 @@
 
 void player::init(Player& player) {
     player.alive = true;
+    player.lives = config::starting_lives;
     player.sprite_rect = atlas::get_sprite_rect(atlas::PlayerNormal);
     player.pos = {
         config::world_width / 2.0f - player.sprite_rect.width,
@@ -21,8 +22,21 @@ void player::update(Player& player) {
     if (player.exploding) {
         player.explosion_timer -= GetFrameTime();
 
-        if (player.explosion_timer <= 0.0f)
+        if (player.explosion_timer <= 0.0f) {
             player.exploding = false;
+
+            // Respawn
+            if (player.lives <= 0) return;
+
+            player.alive = true;
+            player.pos = {
+                config::world_width / 2.0f - player.sprite_rect.width,
+                config::world_height - config::player_spacing_bottom - player.sprite_rect.height
+            };
+
+            player.shot.active = false;
+            player.shot.exploding = false;
+        }
     }
 
     if (!player.alive) return;
@@ -65,6 +79,7 @@ void player::draw(const Player& player, const Texture& atlas) {
 void player::explode(Player& player) {
     if (player.alive && !player.exploding) {
         player.alive = false;
+        player.lives--;
         player.shot.active = false;
         player.exploding = true;
         player.shot.exploding = false;

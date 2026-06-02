@@ -79,7 +79,17 @@ static void check_collisions(game::State& state) {
         if (state.player.alive && CheckCollisionRecs(alien_shot_hitbox, player_hitbox)) {
             shot.active = false;
             player::explode(state.player);
-            // TODO: game over
+
+            if (state.player.lives <= 0) {
+                // TODO: game over
+            } else {
+                // Clear alien shots and enable alien grace period before respawn
+                for (auto& shot : state.alien_shots) {
+                    shot.active = false;
+                }
+
+                state.fleet.shot_timer = config::alien_grace_period;
+            }
         }
 
         // Alien shot hitting shields
@@ -92,6 +102,11 @@ static void check_collisions(game::State& state) {
                 }
             }
         }
+
+        // Alien shot hitting bottom line
+        if (shot.pos.y >= config::world_height - config::line_spacing_bottom - shot.sprite_rect.height) {
+            alien_shot::explode(shot);
+        }
     }
 
     // Player shot hitting shields
@@ -103,6 +118,21 @@ static void check_collisions(game::State& state) {
                 break;
             }
         }
+    }
+}
+
+static void draw_ui(const game::State& state) {
+    // Bottom line
+    int line_y = config::world_height - config::line_spacing_bottom;
+    DrawLine(0, line_y, config::world_width, line_y, theme::green);
+
+    // Lives
+    for (int i = 0; i < state.player.lives; i++) {
+        Vector2 pos = {
+            config::lives_spacing_left + i * config::lives_spacing_inner,
+            config::world_height - config::lives_spacing_bottom - state.player.sprite_rect.height
+        };
+        DrawTextureRec(state.atlas, state.player.sprite_rect, pos, theme::green);
     }
 }
 
@@ -205,6 +235,8 @@ void game::update(State& state) {
 }
 
 void game::draw_world(const State& state) {
+    draw_ui(state);
+
     player::draw(state.player, state.atlas);
 
     for (auto& shield : state.shields) {

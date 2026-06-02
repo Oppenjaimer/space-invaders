@@ -22,6 +22,7 @@ namespace player_shot {
 namespace player {
     struct Player {
         bool alive;
+        int lives;
         Rectangle sprite_rect;
         Vector2 pos;
         player_shot::PlayerShot shot;

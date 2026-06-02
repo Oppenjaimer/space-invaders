@@ -59,7 +59,7 @@ static void fleet_fire(fleet::Fleet& fleet, alien::AlienArray& aliens, alien_sho
     // Find available shot slot
     alien_shot::AlienShot* available_shot = nullptr;
     for (auto& shot : shots) {
-        if (!shot.active) {
+        if (!shot.active && !shot.exploding) {
             available_shot = &shot;
             break;
         }
@@ -264,6 +264,8 @@ void alien_shot::fire(AlienShot &shot, ShotType type, int x, int y) {
     shot.animation_frame = 0;
     shot.pos.x = x;
     shot.pos.y = y;
+    shot.exploding = false;
+    shot.explosion_timer = 0.0f;
 
     set_sprite_rect(shot);
 }

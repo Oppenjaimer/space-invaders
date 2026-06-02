@@ -26,6 +26,7 @@ namespace config {
     constexpr int player_spacing_bottom = 32;
     constexpr float player_speed = 1.2f;
     constexpr float player_shot_speed = 3.5f;
+    constexpr int starting_lives = 3;
 
     // Shields
     constexpr int shield_spacing_bottom = 48;
@@ -61,6 +62,12 @@ namespace config {
     constexpr float explosion_time = 0.3f;
     constexpr float player_explosion_time = 1.0f;
     constexpr float player_flash_time = 0.1f;
+
+    // UI
+    constexpr int line_spacing_bottom = 16;
+    constexpr float lives_spacing_left = 5.0f;
+    constexpr float lives_spacing_bottom = 4.0f;
+    constexpr float lives_spacing_inner = 15.0f;
 }
 
 /**
